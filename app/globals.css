@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
+/* Habilita o variante `dark:` baseado em classe (.dark no <html>), em vez do
+   padrão do Tailwind v4 (media query prefers-color-scheme). Isso permite um
+   botão de alternância de tema controlado por JS + localStorage. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --surface: #ffffff;
+  --surface-muted: #f1f5f9;
+  --border: #e2e8f0;
+  --brand: #4f46e5;
+  --brand-foreground: #ffffff;
+}
+
+.dark {
+  --background: #0b1120;
+  --foreground: #f1f5f9;
+  --surface: #131c31;
+  --surface-muted: #1a2540;
+  --border: #26314d;
+  --brand: #818cf8;
+  --brand-foreground: #0b1120;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  .input {
+    @apply w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm outline-none placeholder:text-foreground/40 focus:border-brand;
+  }
 }
