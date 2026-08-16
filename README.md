@@ -81,6 +81,52 @@ npm run start   # sobe o build de produção
 npm run lint    # eslint
 ```
 
+## Deploy na Vercel
+
+O projeto já está pronto pra Vercel (zero config — ela detecta Next.js
+sozinha). Nenhum destes passos dá pra automatizar por aqui: exigem suas
+próprias contas GitHub e Vercel.
+
+1. **Suba o código pro GitHub.** Crie um repositório vazio em
+   [github.com/new](https://github.com/new) e rode:
+
+   ```bash
+   git remote add origin https://github.com/SEU-USUARIO/SEU-REPO.git
+   git push -u origin main
+   ```
+
+2. **Importe na Vercel.** Em [vercel.com/new](https://vercel.com/new),
+   entre com sua conta (dá pra usar login do GitHub) → "Import Project" →
+   selecione o repositório. O framework é detectado automaticamente.
+
+3. **Configure as variáveis de ambiente.** Antes de clicar em "Deploy", na
+   seção "Environment Variables" da tela de import, cole as mesmas chaves
+   do seu `.env.local`:
+
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=...
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+   NEXT_PUBLIC_SUGGESTION_EMAIL=...
+   ```
+
+   (Se ainda não configurou o Supabase/Google OAuth — ver
+   [Login com Google](#login-com-google-supabase-auth) — pode pular por
+   enquanto: o site funciona normalmente sem, só com o login desabilitado.)
+
+4. **Deploy.** Em cerca de um minuto você tem uma URL tipo
+   `seu-projeto.vercel.app`.
+
+5. **Se já usa login, atualize as URLs de callback** com o domínio de
+   produção (sem isso o Google OAuth funciona em `localhost` mas quebra em
+   produção):
+   - **Supabase** → `Authentication → URL Configuration` → adicione
+     `https://seu-projeto.vercel.app/**`.
+   - **Google Cloud Console** → seu OAuth Client ID → `Authorized
+     JavaScript origins` → adicione `https://seu-projeto.vercel.app`.
+
+Depois do primeiro deploy, todo `git push` na branch principal gera um
+deploy novo automaticamente.
+
 ## Estrutura
 
 ```
