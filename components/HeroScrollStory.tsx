@@ -157,9 +157,16 @@ export default function HeroScrollStory({
         </div>
 
         {/* Gradiente de saída — conecta o fundo animado com o fundo liso
-            da seção "Como funciona" logo abaixo. */}
+            da seção "Como funciona" logo abaixo. -z-10 é essencial aqui:
+            sem isso, um elemento absolute (mesmo sem z-index) pinta por
+            cima do conteúdo estático (texto, estatísticas, dica de
+            rolagem) sempre que eles caem na mesma faixa de altura — foi
+            exatamente isso que apagou os rótulos "eventos/cursos/vagas"
+            quando o hero cresceu (ver fix do min-height acima). Com
+            -z-10 o gradiente só afeta o fundo (partículas/glow, também
+            -z-10), nunca o texto. */}
         <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background sm:h-48"
+          className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-b from-transparent to-background sm:h-48"
           aria-hidden="true"
         />
       </div>
