@@ -165,3 +165,30 @@ h3,
     animation: none;
   }
 }
+
+/* Entrada suave da headline/mascote no carregamento da home — só uma vez,
+   não depende de scroll (a seção não é pinada). */
+@keyframes hero-intro-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-intro {
+  animation: hero-intro-in 0.7s ease-out both;
+}
+
+.hero-intro:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro {
+    animation: none;
+  }
+}
