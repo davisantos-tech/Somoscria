@@ -102,11 +102,12 @@ export default function SobrePage() {
           Por que fazer login
         </h2>
         <p>
-          Navegar na Cria é livre — sem login, sem cadastro. Mas quem entra
-          com a conta Google e completa o perfil (nome, cidade, momento de
-          carreira) ganha uma experiência mais direcionada: menos filtro na
-          mão, mais vaga e evento do seu momento aparecendo primeiro. É
-          opcional, mas economiza seu tempo.
+          Você vê uma prévia de vagas, eventos e cursos sem precisar de
+          conta. Pra ver a lista completa e ganhar uma experiência mais
+          direcionada — menos filtro na mão, mais vaga e evento do seu
+          momento aparecendo primeiro — entra com sua conta Google e
+          completa o perfil (nome, cidade, momento de carreira). Leva menos
+          de um minuto.
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">

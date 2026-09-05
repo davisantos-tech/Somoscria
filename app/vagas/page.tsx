@@ -35,6 +35,8 @@ export default function VagasPage() {
         cities={cities}
         scope="vaga"
         searchPlaceholder="Buscar vaga…"
+        requireLoginAfter={3}
+        gateLabel="vagas"
       />
 
       <PillarCrossLinks current="vaga" />

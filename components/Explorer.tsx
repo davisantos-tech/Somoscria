@@ -4,6 +4,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import ItemCard from "./ItemCard";
 import Tilt from "./Tilt";
+import LoginGateOverlay from "./LoginGateOverlay";
+import { useAuthProfile } from "@/lib/hooks/useAuthProfile";
 import { CITY_LABELS, NICHE_LABELS } from "@/lib/constants";
 import type {
   CatalogItem,
@@ -70,6 +72,8 @@ export default function Explorer({
   initialType = "todos",
   scope = "todos",
   searchPlaceholder,
+  requireLoginAfter,
+  gateLabel = "resultados",
 }: {
   items: CatalogItem[];
   cities: City[];
@@ -77,6 +81,10 @@ export default function Explorer({
   /** Trava o pilar quando a página já é dedicada (/eventos, /cursos, /vagas) — esconde o resto do dropdown de Tipo. */
   scope?: ExplorerScope;
   searchPlaceholder?: string;
+  /** Quantos resultados ficam abertos pra quem não está logado — o resto vem borrado com CTA de login. Sem essa prop, nada é travado. */
+  requireLoginAfter?: number;
+  /** Palavra usada na mensagem do bloqueio, ex.: "vagas", "eventos", "cursos". */
+  gateLabel?: string;
 }) {
   const defaultType: TypeFilter =
     scope === "todos" ? initialType : (scope as TypeFilter);
@@ -126,10 +134,28 @@ export default function Explorer({
     });
   }, [items, query, city, niche, type]);
 
+  // Sem login, só os N primeiros resultados ficam abertos — o resto some
+  // atrás de um blur com CTA (ver LoginGateOverlay). Enquanto o estado de
+  // auth ainda está carregando, trata como deslogado por segurança: evita
+  // mostrar tudo e depois esconder de repente (pior que o inverso).
+  const { loading: authLoading, user } = useAuthProfile();
+  const isLoggedIn = !authLoading && Boolean(user);
+
+  const { visibleItems, lockedPreview, lockedCount } = useMemo(() => {
+    if (!requireLoginAfter || isLoggedIn) {
+      return { visibleItems: filtered, lockedPreview: [], lockedCount: 0 };
+    }
+    return {
+      visibleItems: filtered.slice(0, requireLoginAfter),
+      lockedPreview: filtered.slice(requireLoginAfter, requireLoginAfter + 3),
+      lockedCount: Math.max(filtered.length - requireLoginAfter, 0),
+    };
+  }, [filtered, requireLoginAfter, isLoggedIn]);
+
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Anima os cards entrando (fade + slide-up, em cascata) toda vez que o
-  // resultado filtrado muda — reforça a sensação "dinâmica, leve" da marca.
+  // resultado visível muda — reforça a sensação "dinâmica, leve" da marca.
   useEffect(() => {
     const el = gridRef.current;
     if (!el || el.children.length === 0) return;
@@ -145,7 +171,7 @@ export default function Explorer({
         overwrite: true,
       },
     );
-  }, [filtered]);
+  }, [visibleItems]);
 
   const hasActiveFilters =
     query.trim() !== "" || city !== "todas" || niche !== "todos" || type !== defaultType;
@@ -229,16 +255,23 @@ export default function Explorer({
       </p>
 
       {filtered.length > 0 ? (
-        <div
-          ref={gridRef}
-          className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-        >
-          {filtered.map((item) => (
-            <Tilt key={item.id}>
-              <ItemCard item={item} />
-            </Tilt>
-          ))}
-        </div>
+        <>
+          <div
+            ref={gridRef}
+            className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {visibleItems.map((item) => (
+              <Tilt key={item.id}>
+                <ItemCard item={item} />
+              </Tilt>
+            ))}
+          </div>
+          <LoginGateOverlay
+            lockedItems={lockedPreview}
+            totalLocked={lockedCount}
+            label={gateLabel}
+          />
+        </>
       ) : (
         <div className="mt-4 rounded-xl border border-dashed border-border p-10 text-center text-sm text-foreground/60">
           Nada encontrado com esses filtros. Tenta ajustar a busca — ou{" "}

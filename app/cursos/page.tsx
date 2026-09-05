@@ -34,6 +34,8 @@ export default function CursosPage() {
         cities={[]}
         scope="curso"
         searchPlaceholder="Buscar curso…"
+        requireLoginAfter={3}
+        gateLabel="cursos"
       />
 
       <PillarCrossLinks current="curso" />

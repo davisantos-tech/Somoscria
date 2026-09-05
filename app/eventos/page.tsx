@@ -36,6 +36,8 @@ export default function EventosPage() {
         cities={cities}
         scope="evento"
         searchPlaceholder="Buscar evento…"
+        requireLoginAfter={3}
+        gateLabel="eventos"
       />
 
       <PillarCrossLinks current="evento" />
