@@ -30,6 +30,8 @@ export interface CandidateEvent {
   source_url: string;
   /** Sugestão de nicho via IA (Hugging Face) — sempre revisada por humano antes de publicar, nunca definitiva. */
   suggested_niche?: string[] | null;
+  /** true/false quando a fonte informa preço; null quando não dá pra saber. */
+  is_free?: boolean | null;
 }
 
 /** Insere candidatos novos, ignorando os que já existem (dedupe por source_url). */

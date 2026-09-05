@@ -28,14 +28,17 @@ comment on table public.profiles is
 -- RLS: cada pessoa só enxerga e edita o próprio perfil.
 alter table public.profiles enable row level security;
 
+drop policy if exists "Usuário lê o próprio perfil" on public.profiles;
 create policy "Usuário lê o próprio perfil"
   on public.profiles for select
   using (auth.uid() = id);
 
+drop policy if exists "Usuário cria o próprio perfil" on public.profiles;
 create policy "Usuário cria o próprio perfil"
   on public.profiles for insert
   with check (auth.uid() = id);
 
+drop policy if exists "Usuário atualiza o próprio perfil" on public.profiles;
 create policy "Usuário atualiza o próprio perfil"
   on public.profiles for update
   using (auth.uid() = id)
@@ -84,11 +87,14 @@ create table if not exists public.candidate_events (
 comment on table public.candidate_events is
   'Candidatos a evento encontrados por automação, aguardando revisão humana antes de virar EventItem em data/events.json.';
 
--- Se você já tinha rodado este schema antes de suggested_niche existir,
--- este ALTER garante que a coluna aparece mesmo assim (create table if not
--- exists, acima, não adiciona coluna em tabela que já existe).
+-- Se você já tinha rodado este schema antes de suggested_niche/is_free
+-- existirem, esses ALTERs garantem que as colunas aparecem mesmo assim
+-- (create table if not exists, acima, não adiciona coluna em tabela que já existe).
 alter table public.candidate_events
   add column if not exists suggested_niche text[];
+
+alter table public.candidate_events
+  add column if not exists is_free boolean;
 
 comment on column public.candidate_events.suggested_niche is
   'Sugestão de nicho via IA (Hugging Face zero-shot) — sempre revisada por humano, nunca publicada sem confirmação.';

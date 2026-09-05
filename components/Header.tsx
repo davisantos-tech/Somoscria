@@ -1,12 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import ThemeToggle from "./ThemeToggle";
 import AuthButton from "./AuthButton";
 import Logo from "./Logo";
 import { CITY_DOT_CLASS } from "@/lib/constants";
 
+// 3 pilares como itens de navegação de primeira classe — a ideia é que a
+// pessoa navegue pela plataforma (cada pilar é uma página de verdade),
+// não que a home resuma tudo numa tela só.
 const NAV_LINKS = [
-  { href: "/", label: "Explorar" },
-  { href: "/sugerir", label: "Sugerir evento/curso" },
+  { href: "/vagas", label: "Vagas" },
+  { href: "/eventos", label: "Eventos" },
+  { href: "/cursos", label: "Cursos" },
+  { href: "/sugerir", label: "Sugerir" },
   { href: "/sobre", label: "Sobre" },
 ];
 
@@ -18,6 +26,8 @@ const ACTIVE_CITIES = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
@@ -43,15 +53,21 @@ export default function Header() {
         </Link>
 
         <nav className="flex items-center gap-1 text-sm sm:gap-2">
-          {NAV_LINKS.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-md px-3 py-2 text-foreground/80 transition hover:bg-surface-muted hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {NAV_LINKS.map((link) => {
+            const active = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={`rounded-md px-3 py-2 transition hover:bg-surface-muted hover:text-foreground ${
+                  active ? "bg-surface-muted font-medium text-foreground" : "text-foreground/80"
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
           <ThemeToggle />
           <AuthButton />
         </nav>

@@ -6,6 +6,7 @@ import {
   SENIORITY_LABELS,
 } from "@/lib/constants";
 import type { CatalogItem, City } from "@/lib/types";
+import MagneticButton from "./MagneticButton";
 
 function CityTag({
   city,
@@ -146,14 +147,14 @@ export default function ItemCard({ item }: { item: CatalogItem }) {
             {platformLabel(item)}
           </a>
         </span>
-        <a
+        <MagneticButton
           href={item.sourceUrl}
           target="_blank"
           rel="noopener noreferrer nofollow"
           className="shrink-0 rounded-lg bg-brand px-3 py-2 text-xs font-medium text-brand-foreground transition hover:opacity-90"
         >
           {ctaLabel} ↗
-        </a>
+        </MagneticButton>
       </div>
     </article>
   );

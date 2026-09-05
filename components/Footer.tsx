@@ -6,11 +6,20 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-8 text-sm text-foreground/70 sm:px-6">
         <p className="text-base font-semibold text-foreground">Somos Cria.</p>
         <p className="mt-2 max-w-2xl">
-          Achamos os eventos e cursos bons de BH e SP pra você não precisar
-          garimpar. A gente não vende ingresso, não cobra taxa — só te leva
-          direto pra fonte oficial pra você garantir sua vaga.
+          Achamos as vagas, eventos e cursos bons de BH e SP pra você não
+          precisar garimpar. A gente não vende ingresso, não cobra taxa —
+          só te leva direto pra fonte oficial.
         </p>
         <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+          <Link href="/vagas" className="hover:text-foreground hover:underline">
+            Vagas
+          </Link>
+          <Link href="/eventos" className="hover:text-foreground hover:underline">
+            Eventos
+          </Link>
+          <Link href="/cursos" className="hover:text-foreground hover:underline">
+            Cursos
+          </Link>
           <Link href="/sobre" className="hover:text-foreground hover:underline">
             Sobre a Cria
           </Link>

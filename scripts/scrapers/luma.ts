@@ -16,9 +16,11 @@ const CITY_PAGES: { slug: string; cityRaw: string }[] = [
   { slug: "saopaulo", cityRaw: "São Paulo" },
 ];
 
-const USER_AGENT =
-  "Mozilla/5.0 (compatible; CriaBot/0.1; +https://somoscria-two.vercel.app) — bot de curadoria, contato: " +
-  (process.env.NEXT_PUBLIC_SUGGESTION_EMAIL ?? "curadoria@somoscria.com.br");
+// Cabeçalho HTTP precisa ser ByteString (só caracteres 0-255) — nada de
+// travessão, acento ou emoji aqui, mesmo que pareça inofensivo.
+const USER_AGENT = `Mozilla/5.0 (compatible; CriaBot/0.1; +https://somoscria-two.vercel.app; contato: ${
+  process.env.NEXT_PUBLIC_SUGGESTION_EMAIL ?? "curadoria@somoscria.com.br"
+})`;
 
 interface LumaEvent {
   name?: string;
@@ -29,6 +31,13 @@ interface LumaEvent {
     name?: string;
     address?: { addressLocality?: string };
   };
+  offers?: { price?: number }[];
+}
+
+/** true/false quando dá pra saber pelo preço informado; null quando a Luma não informou. */
+function isFreeFromOffers(offers: LumaEvent["offers"]): boolean | null {
+  if (!offers || offers.length === 0) return null;
+  return offers.every((o) => (o.price ?? 0) === 0);
 }
 
 async function fetchCityEvents(slug: string): Promise<LumaEvent[]> {
@@ -87,6 +96,7 @@ async function main() {
         source_platform: "luma",
         source_url: ev.url,
         suggested_niche: suggestedNiche,
+        is_free: isFreeFromOffers(ev.offers),
       });
     }
 

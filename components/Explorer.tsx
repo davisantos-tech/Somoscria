@@ -14,6 +14,8 @@ import type {
   TypeFilter,
 } from "@/lib/types";
 
+export type ExplorerScope = "todos" | "evento" | "curso" | "vaga";
+
 const TYPE_OPTIONS: { value: TypeFilter; label: string }[] = [
   { value: "todos", label: "Todos os tipos" },
   { value: "vaga", label: "Vaga" },
@@ -24,6 +26,26 @@ const TYPE_OPTIONS: { value: TypeFilter; label: string }[] = [
   { value: "curso-gratuito", label: "Curso gratuito" },
   { value: "curso-pago", label: "Curso pago" },
 ];
+
+// Quando a página já é dedicada a um pilar (/eventos, /cursos, /vagas), o
+// dropdown de "Tipo" vira só um sub-filtro relevante àquele pilar — sem
+// opção de trocar de pilar ali (é só navegar pelo menu pra isso).
+const SCOPED_TYPE_OPTIONS: Record<
+  Exclude<ExplorerScope, "todos">,
+  { value: TypeFilter; label: string }[] | null
+> = {
+  evento: [
+    { value: "evento", label: "Todos" },
+    { value: "evento-presencial", label: "Presencial" },
+    { value: "evento-online", label: "Online" },
+  ],
+  curso: [
+    { value: "curso", label: "Todos" },
+    { value: "curso-gratuito", label: "Gratuito" },
+    { value: "curso-pago", label: "Pago" },
+  ],
+  vaga: null, // só um tipo possível — não precisa de dropdown
+};
 
 const EVENTO_TYPES: TypeFilter[] = [
   "todos",
@@ -46,15 +68,26 @@ export default function Explorer({
   items,
   cities,
   initialType = "todos",
+  scope = "todos",
+  searchPlaceholder,
 }: {
   items: CatalogItem[];
   cities: City[];
   initialType?: TypeFilter;
+  /** Trava o pilar quando a página já é dedicada (/eventos, /cursos, /vagas) — esconde o resto do dropdown de Tipo. */
+  scope?: ExplorerScope;
+  searchPlaceholder?: string;
 }) {
+  const defaultType: TypeFilter =
+    scope === "todos" ? initialType : (scope as TypeFilter);
+
   const [query, setQuery] = useState("");
   const [city, setCity] = useState<CityFilter>("todas");
   const [niche, setNiche] = useState<NicheFilter>("todos");
-  const [type, setType] = useState<TypeFilter>(initialType);
+  const [type, setType] = useState<TypeFilter>(defaultType);
+
+  const showCityFilter = scope !== "curso";
+  const typeOptions = scope === "todos" ? TYPE_OPTIONS : SCOPED_TYPE_OPTIONS[scope];
 
   const niches = useMemo(() => {
     const present = new Set<Niche>();
@@ -115,40 +148,49 @@ export default function Explorer({
   }, [filtered]);
 
   const hasActiveFilters =
-    query.trim() !== "" || city !== "todas" || niche !== "todos" || type !== "todos";
+    query.trim() !== "" || city !== "todas" || niche !== "todos" || type !== defaultType;
 
   function clearFilters() {
     setQuery("");
     setCity("todas");
     setNiche("todos");
-    setType("todos");
+    setType(defaultType);
   }
+
+  // Nicho sempre aparece; Cidade e Tipo são opcionais dependendo do escopo
+  // — o total nunca passa de 3 nem fica abaixo de 2 (ver SCOPED_TYPE_OPTIONS).
+  const filterGridClass =
+    (showCityFilter ? 1 : 0) + 1 + (typeOptions ? 1 : 0) === 3
+      ? "sm:grid-cols-3"
+      : "sm:grid-cols-2";
 
   return (
     <div>
       <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <label className="sr-only" htmlFor="search">
-          Buscar evento, curso ou vaga
+          {searchPlaceholder ?? "Buscar evento, curso ou vaga"}
         </label>
         <input
           id="search"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar por nome do evento, curso ou vaga…"
+          placeholder={searchPlaceholder ?? "Buscar por nome do evento, curso ou vaga…"}
           className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-foreground/40 focus:border-brand"
         />
 
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          <FilterSelect
-            label="Cidade"
-            value={city}
-            onChange={(v) => setCity(v as CityFilter)}
-            options={[
-              { value: "todas", label: "Todas as cidades" },
-              ...cities.map((c) => ({ value: c, label: CITY_LABELS[c] })),
-            ]}
-          />
+        <div className={`grid grid-cols-1 gap-3 ${filterGridClass}`}>
+          {showCityFilter && (
+            <FilterSelect
+              label="Cidade"
+              value={city}
+              onChange={(v) => setCity(v as CityFilter)}
+              options={[
+                { value: "todas", label: "Todas as cidades" },
+                ...cities.map((c) => ({ value: c, label: CITY_LABELS[c] })),
+              ]}
+            />
+          )}
           <FilterSelect
             label="Nicho"
             value={niche}
@@ -158,12 +200,14 @@ export default function Explorer({
               ...niches.map((n) => ({ value: n, label: NICHE_LABELS[n] })),
             ]}
           />
-          <FilterSelect
-            label="Tipo"
-            value={type}
-            onChange={(v) => setType(v as TypeFilter)}
-            options={TYPE_OPTIONS}
-          />
+          {typeOptions && (
+            <FilterSelect
+              label="Tipo"
+              value={type}
+              onChange={(v) => setType(v as TypeFilter)}
+              options={typeOptions}
+            />
+          )}
         </div>
 
         {hasActiveFilters && (
