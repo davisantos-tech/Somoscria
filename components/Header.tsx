@@ -43,12 +43,12 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-background/80 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-foreground text-background">
-            <span className="font-display text-base font-bold">C</span>
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="logo-glow inline-flex h-9 w-9 items-center justify-center rounded-lg bg-foreground text-background">
+            <span className="font-display text-lg font-bold">C</span>
           </span>
-          <Logo className="text-lg" />
+          <Logo className="text-xl" />
           <span className="hidden items-center gap-1.5 pl-1 sm:flex">
             {ACTIVE_CITIES.map((c) => (
               <span
@@ -146,6 +146,9 @@ export default function Header() {
           </div>
         </div>
       </nav>
+
+      {/* Fio de LED correndo nas cores da marca — o "chamativo" do header. */}
+      <div className="header-led h-[2px] w-full" aria-hidden="true" />
     </header>
   );
 }

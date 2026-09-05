@@ -8,7 +8,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroGlow from "./HeroGlow";
 import ParticleField from "./ParticleField";
 import CountUp from "./CountUp";
-import ScrollReveal from "./ScrollReveal";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -26,70 +25,68 @@ interface HeroScrollStoryProps {
   jobCount: number;
 }
 
-// A "cena" de entrada da home: primeira tela cheia (headline à esquerda,
-// mascote grande à direita, fundo de partículas). Ao rolar, a mascote
-// desce junto com o scroll — sem travar a página (nada de pin/scroll-jack)
-// — e chega pequena bem em cima do título "Como funciona", que já é
-// conteúdo normal da página, logo abaixo da primeira tela. As partículas
-// ficam só na primeira tela: a partir daí o fundo volta a ser liso, igual
-// ao resto do site.
-//
-// Esse efeito de "mascote acompanhando o scroll" só roda em telas md+
-// (gsap.matchMedia) — no celular a gente já mostra tudo em fluxo normal,
-// sem posicionamento absoluto nenhum, pra nunca sobrepor texto.
+// A "cena" de entrada da home (md+): primeira tela cheia, headline grande
+// à esquerda e mascote grande à direita. Ao rolar, a tela fica pinada — a
+// mascote nunca sai do centro vertical, só desliza da direita pro centro
+// horizontal — e quando ela chega no meio, "Como funciona" aparece ao
+// redor dela (título+ideia da plataforma em cima, os 3 passos embaixo).
+// Esse pin só roda em telas md+ (gsap.matchMedia): no celular a gente
+// mostra tudo em fluxo normal, sem pin nem posicionamento absoluto.
 export default function HeroScrollStory({
   eventCount,
   courseCount,
   jobCount,
 }: HeroScrollStoryProps) {
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const pinRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const quickAccessRef = useRef<HTMLDivElement>(null);
   const scrollCueRef = useRef<HTMLDivElement>(null);
   const mascotBoxRef = useRef<HTMLDivElement>(null);
   const howTitleRef = useRef<HTMLDivElement>(null);
+  const stepsRowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
       mm.add("(min-width: 768px)", () => {
+        const headerHeight =
+          document.querySelector("header")?.getBoundingClientRect().height ?? 64;
+
+        // Y fica travado em 50% pra sempre — só X se move. É isso que faz
+        // a mascote "flutuar" sempre no centro vertical da tela.
         gsap.set(mascotBoxRef.current, {
-          top: "40vh",
-          left: "82%",
+          top: "50%",
+          left: "80%",
           xPercent: -50,
           yPercent: -50,
         });
-        gsap.set(howTitleRef.current, { opacity: 0, y: 10 });
+        gsap.set(howTitleRef.current, { opacity: 0, y: -14 });
+        gsap.set(stepsRowRef.current, { opacity: 0, y: 20 });
 
         const tl = gsap.timeline({
           scrollTrigger: {
             trigger: wrapperRef.current,
-            start: "top top",
-            end: "+=130%",
+            start: `top top+=${headerHeight}`,
+            end: "+=150%",
             scrub: 1,
-            // Sem pin — a página rola normal o tempo todo, a mascote só
-            // acompanha o progresso do scroll com a própria posição dela.
+            pin: pinRef.current,
+            pinSpacing: true,
+            // Usa transform em vez de position:fixed pra pinar — imune a
+            // qualquer ancestral que ganhe um transform (ex.: a transição
+            // de página em app/template.tsx), que senão vira containing
+            // block e quebra o pin fixo.
+            pinType: "transform",
           },
         });
 
-        tl.to(headlineRef.current, { opacity: 0, y: -30, duration: 0.4 }, 0)
-          .to(quickAccessRef.current, { opacity: 0, y: 20, duration: 0.3 }, 0)
-          .to(scrollCueRef.current, { opacity: 0, duration: 0.2 }, 0)
-          .to(
-            mascotBoxRef.current,
-            {
-              top: "calc(100vh + 14vh)",
-              left: "50%",
-              xPercent: -50,
-              yPercent: -50,
-              width: "9rem",
-              duration: 1,
-              ease: "none",
-            },
-            0,
-          )
-          .to(howTitleRef.current, { opacity: 1, y: 0, duration: 0.3 }, 0.55);
+        tl.to(headlineRef.current, { opacity: 0, x: -50, duration: 0.9 }, 0)
+          .to(quickAccessRef.current, { opacity: 0, y: 20, duration: 0.5 }, 0)
+          .to(scrollCueRef.current, { opacity: 0, duration: 0.3 }, 0)
+          .to(mascotBoxRef.current, { left: "50%", duration: 1.4, ease: "none" }, 0.1)
+          .to(howTitleRef.current, { opacity: 1, y: 0, duration: 0.4 }, 1.0)
+          .to(stepsRowRef.current, { opacity: 1, y: 0, duration: 0.4 }, 1.2);
 
         return () => {
           tl.scrollTrigger?.kill();
@@ -110,9 +107,9 @@ export default function HeroScrollStory({
   ];
 
   return (
-    <div ref={wrapperRef} className="relative">
+    <div ref={wrapperRef} className="relative h-auto md:h-[250vh]">
       {/* ---------- Layout mobile/tablet (< md): tudo em fluxo normal,
-          sem posicionamento absoluto — nada sobrepõe nada. ---------- */}
+          sem pin nem posicionamento absoluto — nada sobrepõe nada. ---------- */}
       <div className="relative overflow-hidden md:hidden">
         <HeroGlow />
         <ParticleField />
@@ -127,11 +124,11 @@ export default function HeroScrollStory({
             width={520}
             height={520}
             priority
-            className="mx-auto mt-4 h-auto w-40 select-none"
+            className="mx-auto mt-4 h-auto w-48 select-none"
             draggable={false}
           />
 
-          <h1 className="font-display mt-4 text-4xl leading-[1.05] font-bold tracking-tight">
+          <h1 className="font-display mt-4 text-5xl leading-[0.95] font-bold tracking-tight">
             Vaga, evento e curso bom de BH e SP,{" "}
             <span className="text-brand">num lugar só.</span>
           </h1>
@@ -166,28 +163,55 @@ export default function HeroScrollStory({
             ))}
           </div>
         </div>
+
+        <div className="mx-auto max-w-xl border-t border-border px-4 py-14 text-center sm:px-6">
+          <h2 className="font-display text-2xl font-semibold tracking-tight">
+            Como funciona
+          </h2>
+          <p className="mt-1 text-sm text-foreground/60">
+            Simples assim — sem cadastro obrigatório, sem taxa.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 text-left">
+            {STEPS.map((step) => (
+              <div
+                key={step.title}
+                className="flex items-start gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm"
+              >
+                <span className="text-xl" aria-hidden="true">
+                  {step.icon}
+                </span>
+                <div>
+                  <p className="text-sm font-semibold">{step.title}</p>
+                  <p className="mt-0.5 text-xs text-foreground/60">
+                    {step.text}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ---------- Layout desktop (md+): primeira tela + mascote que
-          acompanha o scroll descendo até "Como funciona". ---------- */}
-      <div className="relative hidden overflow-hidden md:block">
+      {/* ---------- Layout desktop (md+): a cena pinada. ---------- */}
+      <div ref={pinRef} className="relative hidden h-screen w-full overflow-hidden md:block">
         <HeroGlow />
         <ParticleField />
-        <div className="mx-auto flex h-screen max-w-6xl px-4 sm:px-6">
-          <div ref={headlineRef} className="my-auto max-w-xl">
+
+        <div className="mx-auto flex h-full max-w-6xl items-center px-4 sm:px-6">
+          <div ref={headlineRef} className="max-w-2xl">
             <span className="inline-flex items-center rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">
               👋 Bem-vindo(a) — somos Cria
             </span>
-            <h1 className="font-display mt-4 text-4xl leading-[1.05] font-bold tracking-tight sm:text-6xl lg:text-7xl">
+            <h1 className="font-display mt-5 text-6xl leading-[0.95] font-bold tracking-tight sm:text-7xl lg:text-8xl">
               Vaga, evento e curso bom de BH e SP,{" "}
               <span className="text-brand">num lugar só.</span>
             </h1>
-            <p className="mt-4 max-w-md text-base text-foreground/70 sm:text-lg">
+            <p className="mt-6 max-w-lg text-lg text-foreground/70 sm:text-xl">
               Achado pela comunidade, pra comunidade. Cada card leva direto
               pra fonte oficial pra você garantir sua vaga.
             </p>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/vagas"
                 className="inline-flex items-center gap-1.5 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:brightness-105"
@@ -213,122 +237,116 @@ export default function HeroScrollStory({
               ))}
             </div>
           </div>
-
-          {/* Atalhos rápidos — somem cedo ao rolar */}
-          <div
-            ref={quickAccessRef}
-            className="absolute bottom-10 left-4 flex gap-2 sm:left-6"
-          >
-            {[
-              { href: "/eventos", label: "Eventos", icon: "🎟️" },
-              { href: "/cursos", label: "Cursos", icon: "🎓" },
-              { href: "/vagas", label: "Vagas", icon: "💼" },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 text-xs font-medium shadow-sm transition hover:border-brand"
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-
-          {/* Dica de rolagem */}
-          <div
-            ref={scrollCueRef}
-            className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1.5 text-xs text-foreground/50"
-          >
-            <span>Role para descobrir</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-4 w-4 animate-bounce"
-              aria-hidden="true"
-            >
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
-          </div>
         </div>
-      </div>
 
-      {/* Mascote — filho direto do wrapper (não da seção com overflow-hidden
-          do hero), pra poder descer visualmente da 1ª tela até aqui embaixo
-          sem ser cortada. Só existe/anima em md+. */}
-      <div
-        ref={mascotBoxRef}
-        className="pointer-events-none absolute top-[40vh] left-[82%] hidden w-56 -translate-x-1/2 -translate-y-1/2 md:block lg:w-72"
-        aria-hidden="true"
-      >
-        <Image
-          src="/mascot/cria-wave.png"
-          alt=""
-          width={520}
-          height={520}
-          priority
-          className="h-auto w-full select-none"
-          draggable={false}
-        />
-      </div>
+        {/* Mascote — sempre no centro vertical da tela; só desliza no
+            eixo horizontal, da direita pro centro. */}
+        <div
+          ref={mascotBoxRef}
+          className="pointer-events-none absolute top-1/2 left-[80%] w-56 -translate-x-1/2 -translate-y-1/2 sm:w-64 lg:w-72"
+        >
+          <Image
+            src="/mascot/cria-wave.png"
+            alt="Mascote da Cria acenando"
+            width={520}
+            height={520}
+            priority
+            className="h-auto w-full select-none"
+            draggable={false}
+          />
+        </div>
 
-      {/* "Como funciona" — conteúdo normal da página, logo abaixo da
-          primeira tela (fundo liso, sem partículas). */}
-      <div className="mx-auto hidden max-w-6xl px-4 py-24 text-center sm:px-6 md:block">
-        <div ref={howTitleRef}>
+        {/* "Como funciona" — título + a ideia por trás da plataforma,
+            aparece em cima quando a mascote chega no centro. */}
+        <div
+          ref={howTitleRef}
+          className="absolute top-[7%] left-1/2 max-w-xl -translate-x-1/2 px-4 text-center"
+        >
           <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
             Como funciona
           </h2>
-          <p className="mt-1 text-sm text-foreground/60">
-            Simples assim — sem cadastro obrigatório, sem taxa.
+          <p className="mx-auto mt-3 max-w-md text-sm text-foreground/70 sm:text-base">
+            A Cria existe pra juntar num só lugar o que anda espalhado por aí
+            — vaga, evento e curso, garimpados pela comunidade e revisados
+            por gente de verdade. A gente nunca substitui a fonte: só te
+            mostra o essencial e te leva direto pra ela.
           </p>
         </div>
 
-        <ScrollReveal className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {/* Os 3 passos, embaixo da mascote centralizada */}
+        <div
+          ref={stepsRowRef}
+          className="absolute bottom-[8%] left-1/2 flex -translate-x-1/2 gap-3 px-4 sm:gap-4"
+        >
           {STEPS.map((step) => (
             <div
               key={step.title}
-              className="rounded-2xl border border-border bg-surface p-5 text-center shadow-sm"
-            >
-              <span className="text-2xl" aria-hidden="true">
-                {step.icon}
-              </span>
-              <p className="mt-2 text-sm font-semibold">{step.title}</p>
-              <p className="mt-1 text-xs text-foreground/60">{step.text}</p>
-            </div>
-          ))}
-        </ScrollReveal>
-      </div>
-
-      {/* Versão mobile de "Como funciona" — sem mascote acompanhando,
-          direto abaixo do hero. */}
-      <div className="mx-auto max-w-xl border-t border-border px-4 py-14 text-center sm:px-6 md:hidden">
-        <h2 className="font-display text-2xl font-semibold tracking-tight">
-          Como funciona
-        </h2>
-        <p className="mt-1 text-sm text-foreground/60">
-          Simples assim — sem cadastro obrigatório, sem taxa.
-        </p>
-        <div className="mt-6 flex flex-col gap-3 text-left">
-          {STEPS.map((step) => (
-            <div
-              key={step.title}
-              className="flex items-start gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm"
+              className="w-36 rounded-2xl border border-border bg-surface p-3 text-center shadow-lg sm:w-44 sm:p-4"
             >
               <span className="text-xl" aria-hidden="true">
                 {step.icon}
               </span>
-              <div>
-                <p className="text-sm font-semibold">{step.title}</p>
-                <p className="mt-0.5 text-xs text-foreground/60">{step.text}</p>
-              </div>
+              <p className="mt-1 text-sm font-semibold">{step.title}</p>
+              <p className="mt-0.5 text-xs text-foreground/60">{step.text}</p>
             </div>
           ))}
+        </div>
+
+        {/* Atalhos rápidos — somem cedo ao rolar */}
+        <div
+          ref={quickAccessRef}
+          className="absolute bottom-10 left-4 flex gap-2 sm:left-6"
+        >
+          {[
+            { href: "/eventos", label: "Eventos", icon: "🎟️" },
+            { href: "/cursos", label: "Cursos", icon: "🎓" },
+            { href: "/vagas", label: "Vagas", icon: "💼" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 text-xs font-medium shadow-sm transition hover:border-brand"
+            >
+              <span aria-hidden="true">{item.icon}</span>
+              {item.label}
+            </Link>
+          ))}
+        </div>
+
+        {/* Dica de rolagem — duas setinhas, uma atrás da outra */}
+        <div
+          ref={scrollCueRef}
+          className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-xs text-foreground/50"
+        >
+          <span className="mb-1">Role para descobrir</span>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="h-3.5 w-3.5 animate-bounce"
+            style={{ animationDelay: "0ms" }}
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="-mt-2 h-3.5 w-3.5 animate-bounce"
+            style={{ animationDelay: "150ms" }}
+            aria-hidden="true"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
         </div>
       </div>
     </div>

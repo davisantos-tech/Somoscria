@@ -27,7 +27,7 @@ const PILLARS = [
     title: "Vagas",
     chipClass: "bg-brand-green/15 text-brand-green",
     description:
-      "Oportunidades reais, direto na fonte oficial da empresa — sem vaga fantasma, sem taxa de intermediário.",
+      "Oportunidades reais, direto na fonte oficial da empresa — sem vaga fantasma, sem taxa de intermediário. Pilar ainda em construção.",
   },
 ];
 
@@ -39,10 +39,36 @@ const TRAITS = [
   { icon: "📣", label: "Direto", text: "Comunica o essencial e te leva pro próximo passo." },
 ];
 
+const PIPELINE = [
+  {
+    step: "1",
+    title: "A comunidade indica",
+    text: "Qualquer pessoa manda uma vaga, evento ou curso pela página Sugerir. É a fonte mais direta que existe.",
+  },
+  {
+    step: "2",
+    title: "A gente garimpa",
+    text: "Também vasculhamos, com ajuda de automação, páginas públicas de plataformas como Sympla, Luma e Eventbrite atrás de coisa boa que ainda não estava aqui.",
+  },
+  {
+    step: "3",
+    title: "Um humano revisa",
+    text: "Toda sugestão — vinda da comunidade ou encontrada pela automação — passa por uma pessoa de verdade antes de ir pro ar. Nenhum robô publica nada sozinho.",
+  },
+  {
+    step: "4",
+    title: "Você recebe só o essencial",
+    text: "Nome, data, local ou modalidade, área e um resumo curto escrito por nós — com o link que leva direto pra fonte oficial.",
+  },
+];
+
 export default function SobrePage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6">
-      <h1 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+      <span className="inline-flex items-center rounded-full bg-brand/15 px-3 py-1 text-xs font-semibold text-brand">
+        👋 De onde viemos
+      </span>
+      <h1 className="font-display mt-4 text-3xl font-semibold tracking-tight sm:text-4xl">
         Somos Cria
       </h1>
       <p className="mt-3 text-lg text-foreground/70">
@@ -52,11 +78,21 @@ export default function SobrePage() {
 
       <div className="mt-10 space-y-6 text-foreground/80">
         <p>
-          A Cria existe pra você achar a vaga, o evento ou o curso certo sem
-          precisar garimpar em dez lugares diferentes. Começamos em Belo
-          Horizonte e São Paulo, reunindo num só lugar o que anda espalhado
-          por plataformas como Sympla, Luma, Eventbrite, Hotmart, Coursera e
-          outras — organizado por área.
+          “Cria” é como a gente se chama por aqui — quem é da comunidade,
+          quem é daqui, quem cresceu junto. A ideia nasceu de um problema bem
+          simples de resolver e bem chato de viver: oportunidade boa —
+          aquele evento que vale a pena, aquele curso gratuito de verdade,
+          aquela vaga que não é fantasma — sempre existiu. O problema nunca
+          foi falta de oportunidade, foi ela estar espalhada: um grupo de
+          WhatsApp aqui, um story que passou rápido, uma plataforma que
+          ninguém usa. A Cria existe pra juntar tudo isso num lugar só,
+          organizado por área, sem você precisar garimpar em dez lugares
+          diferentes.
+        </p>
+        <p>
+          Começamos em Belo Horizonte e São Paulo. Não por acaso: são as
+          cidades onde a gente vive, erra, aprende e testa a ideia com gente
+          de verdade antes de pensar em crescer pra qualquer outro lugar.
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
@@ -95,7 +131,35 @@ export default function SobrePage() {
           modalidade, área e de onde veio a informação, com um resumo curto
           escrito por nós. O botão principal sempre abre a página oficial,
           em outra aba, e é lá que a inscrição, compra ou candidatura de
-          fato acontece.
+          fato acontece. A Cria nunca processa pagamento, inscrição ou
+          candidatura dentro da própria plataforma.
+        </p>
+
+        <h2 className="font-display text-xl font-semibold text-foreground">
+          Como a curadoria funciona, passo a passo
+        </h2>
+        <p>
+          Aqui vai o processo de ponta a ponta, sem mistério — porque
+          “curadoria de verdade” só tem valor se a gente te mostra como ela
+          é feita:
+        </p>
+        <ol className="space-y-4">
+          {PIPELINE.map((p) => (
+            <li key={p.step} className="flex gap-3">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-brand/15 text-sm font-semibold text-brand">
+                {p.step}
+              </span>
+              <div>
+                <p className="font-semibold text-foreground">{p.title}</p>
+                <p className="mt-0.5 text-sm text-foreground/70">{p.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+        <p>
+          A automação ajuda a encontrar candidatos mais rápido — nunca a
+          decidir o que vai pro ar. Quem decide é sempre gente de verdade,
+          da própria comunidade.
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
@@ -107,7 +171,8 @@ export default function SobrePage() {
           direcionada — menos filtro na mão, mais vaga e evento do seu
           momento aparecendo primeiro — entra com sua conta Google e
           completa o perfil (nome, cidade, momento de carreira). Leva menos
-          de um minuto.
+          de um minuto, e os dados do seu perfil são seus: protegidos e
+          visíveis só pra você.
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
@@ -118,7 +183,8 @@ export default function SobrePage() {
           cobrimos Belo Horizonte e São Paulo lado a lado; conforme a
           comunidade cresce, novas cidades entram como mais uma camada
           dentro do mesmo produto, do mesmo jeito. “Cria BH”, “Cria SP” são
-          a mesma Cria, só filtrada por onde você está.
+          a mesma Cria, só filtrada por onde você está. A cidade nunca vira
+          uma marca separada — é sempre a Cria, com mais gente dentro.
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
@@ -147,6 +213,7 @@ export default function SobrePage() {
             mesmo quando automação ajuda a encontrar candidatos, ninguém
             publica nada sem revisão humana antes.
           </li>
+          <li>Nunca inventamos vaga, evento ou curso. Se está aqui, é real.</li>
         </ul>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
@@ -173,6 +240,19 @@ export default function SobrePage() {
         </p>
 
         <h2 className="font-display text-xl font-semibold text-foreground">
+          Pra onde a gente quer ir
+        </h2>
+        <p>
+          Hoje a Cria é uma vitrine: um jeito rápido e honesto de achar
+          oportunidade boa. A visão de longo prazo é ir além disso — virar
+          um espaço onde a própria comunidade se encontra, não só encontra
+          oportunidade. Isso é coisa pra mais pra frente, construída com
+          cuidado (principalmente com o que é dado seu e o que continua
+          privado). Por enquanto, o compromisso é simples: fazer bem feito o
+          que já existe, sem pressa de virar outra coisa antes da hora.
+        </p>
+
+        <h2 className="font-display text-xl font-semibold text-foreground">
           Como a gente é
         </h2>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
@@ -187,6 +267,17 @@ export default function SobrePage() {
               <p className="mt-0.5 text-xs text-foreground/60">{t.text}</p>
             </div>
           ))}
+        </div>
+
+        <div className="rounded-2xl border border-brand/20 bg-brand/5 p-6 text-center">
+          <p className="font-display text-lg font-semibold text-foreground">
+            A Cria não é feita pra uma comunidade. É feita com várias — a
+            comunidade das comunidades.
+          </p>
+          <p className="mt-2 text-sm text-foreground/70">
+            Cada vaga, evento e curso aqui passou pela mão de alguém que faz
+            parte disso. Se você também faz, bem-vindo(a) — somos Cria.
+          </p>
         </div>
       </div>
     </div>
