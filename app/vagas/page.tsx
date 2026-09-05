@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Explorer from "@/components/Explorer";
 import ScrollReveal from "@/components/ScrollReveal";
 import PillarCrossLinks from "@/components/PillarCrossLinks";
+import UnderDevelopmentGate from "@/components/UnderDevelopmentGate";
 import { getJobs, getAvailableCities } from "@/lib/data";
 
 export const metadata: Metadata = {
@@ -31,32 +31,23 @@ export default function VagasPage() {
         </p>
       </ScrollReveal>
 
-      <ScrollReveal className="mb-8">
-        <div className="flex flex-col gap-2 rounded-2xl border border-brand-yellow/40 bg-brand-yellow/10 p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-foreground/80">
-            <span className="font-semibold text-foreground">
-              🚧 Essa página ainda está em desenvolvimento.
-            </span>{" "}
-            Estamos construindo a rede de vagas reais aos poucos, direto na
-            fonte oficial de cada empresa.
-          </p>
-          <Link
-            href="/sugerir"
-            className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-full border border-border bg-surface px-4 py-2 text-xs font-semibold transition hover:border-brand hover:text-brand"
-          >
-            Conhece uma vaga boa? Sugere aqui →
-          </Link>
-        </div>
-      </ScrollReveal>
-
-      <Explorer
-        items={jobs}
-        cities={cities}
-        scope="vaga"
-        searchPlaceholder="Buscar vaga…"
-        requireLoginAfter={3}
-        gateLabel="vagas"
-      />
+      {jobs.length > 0 ? (
+        <Explorer
+          items={jobs}
+          cities={cities}
+          scope="vaga"
+          searchPlaceholder="Buscar vaga…"
+          requireLoginAfter={3}
+          gateLabel="vagas"
+        />
+      ) : (
+        <ScrollReveal>
+          <UnderDevelopmentGate
+            description="Estamos construindo a rede de vagas reais aos poucos, direto na fonte oficial de cada empresa. Conhece uma vaga boa?"
+            ctaLabel="Sugere uma vaga →"
+          />
+        </ScrollReveal>
+      )}
 
       <PillarCrossLinks current="vaga" />
     </div>

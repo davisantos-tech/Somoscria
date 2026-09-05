@@ -84,7 +84,7 @@ export default function HeroScrollStory({
         tl.to(headlineRef.current, { opacity: 0, x: -50, duration: 0.9 }, 0)
           .to(quickAccessRef.current, { opacity: 0, y: 20, duration: 0.5 }, 0)
           .to(scrollCueRef.current, { opacity: 0, duration: 0.3 }, 0)
-          .to(mascotBoxRef.current, { left: "50%", duration: 1.4, ease: "none" }, 0.1)
+          .to(mascotBoxRef.current, { left: "50%", duration: 1.4, ease: "power1.inOut" }, 0.1)
           .to(howTitleRef.current, { opacity: 1, y: 0, duration: 0.4 }, 1.0)
           .to(stepsRowRef.current, { opacity: 1, y: 0, duration: 0.4 }, 1.2);
 
@@ -118,15 +118,23 @@ export default function HeroScrollStory({
             👋 Bem-vindo(a) — somos Cria
           </span>
 
-          <Image
-            src="/mascot/cria-wave.png"
-            alt="Mascote da Cria acenando"
-            width={520}
-            height={520}
-            priority
-            className="mx-auto mt-4 h-auto w-48 select-none"
-            draggable={false}
-          />
+          <div className="relative mx-auto mt-4 w-48">
+            <div className="mascot-bob">
+              <Image
+                src="/mascot/cria-wave.png"
+                alt="Mascote da Cria acenando"
+                width={520}
+                height={520}
+                priority
+                className="h-auto w-full select-none"
+                draggable={false}
+              />
+            </div>
+            <div
+              className="mx-auto -mt-3 h-4 w-2/3 rounded-full bg-black/25 blur-md dark:bg-black/40"
+              aria-hidden="true"
+            />
+          </div>
 
           <h1 className="font-display mt-4 text-5xl leading-[0.95] font-bold tracking-tight">
             Vaga, evento e curso bom de BH e SP,{" "}
@@ -140,9 +148,13 @@ export default function HeroScrollStory({
           <div className="mt-6 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
             <Link
               href="/vagas"
-              className="inline-flex items-center justify-center gap-1.5 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:brightness-105"
+              className="group relative inline-flex items-center justify-center gap-1.5 overflow-hidden rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:brightness-105"
             >
-              Ver vagas agora →
+              <span
+                className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+                aria-hidden="true"
+              />
+              <span className="relative">Ver vagas agora →</span>
             </Link>
             <Link
               href="/sobre"
@@ -177,7 +189,10 @@ export default function HeroScrollStory({
                 key={step.title}
                 className="flex items-start gap-3 rounded-2xl border border-border bg-surface p-4 shadow-sm"
               >
-                <span className="text-xl" aria-hidden="true">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand/15 text-lg"
+                  aria-hidden="true"
+                >
                   {step.icon}
                 </span>
                 <div>
@@ -214,9 +229,13 @@ export default function HeroScrollStory({
             <div className="mt-7 flex flex-wrap items-center gap-3">
               <Link
                 href="/vagas"
-                className="inline-flex items-center gap-1.5 rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:brightness-105"
+                className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-lg shadow-brand/30 transition hover:-translate-y-0.5 hover:brightness-105"
               >
-                Ver vagas agora →
+                <span
+                  className="pointer-events-none absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-full"
+                  aria-hidden="true"
+                />
+                <span className="relative">Ver vagas agora →</span>
               </Link>
               <Link
                 href="/sobre"
@@ -245,31 +264,39 @@ export default function HeroScrollStory({
           ref={mascotBoxRef}
           className="pointer-events-none absolute top-1/2 left-[80%] w-56 -translate-x-1/2 -translate-y-1/2 sm:w-64 lg:w-72"
         >
-          <Image
-            src="/mascot/cria-wave.png"
-            alt="Mascote da Cria acenando"
-            width={520}
-            height={520}
-            priority
-            className="h-auto w-full select-none"
-            draggable={false}
+          <div className="mascot-bob">
+            <Image
+              src="/mascot/cria-wave.png"
+              alt="Mascote da Cria acenando"
+              width={520}
+              height={520}
+              priority
+              className="h-auto w-full select-none"
+              draggable={false}
+            />
+          </div>
+          {/* Sombra de "chão" — sem ela a mascote parece recortada e colada
+              por cima do fundo, em vez de fazer parte da cena. */}
+          <div
+            className="mx-auto -mt-4 h-6 w-2/3 rounded-full bg-black/30 blur-lg"
+            aria-hidden="true"
           />
         </div>
 
-        {/* "Como funciona" — título + a ideia por trás da plataforma,
-            aparece em cima quando a mascote chega no centro. */}
+        {/* "Como funciona" — título + a ideia por trás da plataforma, num
+            painel de vidro pra não brigar com o fundo de partículas.
+            Aparece quando a mascote chega no centro. */}
         <div
           ref={howTitleRef}
-          className="absolute top-[7%] left-1/2 max-w-xl -translate-x-1/2 px-4 text-center"
+          className="absolute top-[5%] left-1/2 max-w-lg -translate-x-1/2 rounded-3xl border border-border bg-surface/80 px-8 py-5 text-center shadow-xl backdrop-blur-md"
         >
           <h2 className="font-display text-2xl font-semibold tracking-tight sm:text-3xl">
             Como funciona
           </h2>
-          <p className="mx-auto mt-3 max-w-md text-sm text-foreground/70 sm:text-base">
-            A Cria existe pra juntar num só lugar o que anda espalhado por aí
-            — vaga, evento e curso, garimpados pela comunidade e revisados
-            por gente de verdade. A gente nunca substitui a fonte: só te
-            mostra o essencial e te leva direto pra ela.
+          <p className="mx-auto mt-2 max-w-sm text-sm text-foreground/70 sm:text-base">
+            A Cria junta vaga, evento e curso garimpados pela comunidade e
+            revisados por gente de verdade — sempre te levando direto pra
+            fonte.
           </p>
         </div>
 
@@ -281,9 +308,12 @@ export default function HeroScrollStory({
           {STEPS.map((step) => (
             <div
               key={step.title}
-              className="w-36 rounded-2xl border border-border bg-surface p-3 text-center shadow-lg sm:w-44 sm:p-4"
+              className="w-36 rounded-2xl border border-border bg-surface/90 p-3 text-center shadow-xl backdrop-blur-sm sm:w-44 sm:p-4"
             >
-              <span className="text-xl" aria-hidden="true">
+              <span
+                className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl bg-brand/15 text-lg"
+                aria-hidden="true"
+              >
                 {step.icon}
               </span>
               <p className="mt-1 text-sm font-semibold">{step.title}</p>

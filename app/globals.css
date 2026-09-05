@@ -142,3 +142,26 @@ h3,
     animation: none;
   }
 }
+
+/* Balanço suave da mascote no hero — aplicado num wrapper INTERNO, nunca
+   na caixa que o GSAP controla (que já usa transform pra pin/posição):
+   duas animações de transform no mesmo elemento brigariam entre si. */
+@keyframes mascot-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.mascot-bob {
+  animation: mascot-bob 4.5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot-bob {
+    animation: none;
+  }
+}
