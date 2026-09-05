@@ -5,6 +5,16 @@
    botão de alternância de tema controlado por JS + localStorage. */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Altura real do <Header> (sticky, sempre ocupando espaço no fluxo) —
+   medida: py-4 (32px) + conteúdo (36px) + o fio de LED (2px) = 71px no
+   desktop. Usado pra seções tipo o hero, que precisam ocupar exatamente
+   "o resto da primeira tela" (100vh - header), não 100vh cheio — senão o
+   fundo do header some da conta e empurra o final da seção (dica de
+   rolagem, atalhos) pra fora da tela, exigindo scroll sem querer. */
+:root {
+  --header-h: 71px;
+}
+
 /* Paleta da identidade visual da Cria (moodboard 16/08/2026):
    laranja = marca/eventos, amarelo = cursos, verde = vagas/positivo. */
 :root {

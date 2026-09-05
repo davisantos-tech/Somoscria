@@ -73,7 +73,7 @@ export default function HeroScrollStory({
   return (
     <div className="relative">
       {/* ---------- Primeira tela: fundo animado só existe aqui. ---------- */}
-      <div className="relative flex h-screen min-h-[640px] w-full flex-col overflow-hidden">
+      <div className="relative flex min-h-[calc(100vh-var(--header-h))] w-full flex-col overflow-hidden">
         <HeroGlow />
         <ParticleField />
 
@@ -118,28 +118,14 @@ export default function HeroScrollStory({
           </div>
         </div>
 
-        {/* Atalhos rápidos */}
-        <div className="mx-auto hidden w-full max-w-6xl px-4 pb-10 sm:px-6 md:block">
-          <div className="flex gap-2">
-            {[
-              { href: "/eventos", label: "Eventos", icon: "🎟️" },
-              { href: "/cursos", label: "Cursos", icon: "🎓" },
-              { href: "/vagas", label: "Vagas", icon: "💼" },
-            ].map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-2 text-xs font-medium shadow-sm transition hover:border-brand"
-              >
-                <span aria-hidden="true">{item.icon}</span>
-                {item.label}
-              </Link>
-            ))}
-          </div>
-        </div>
+        {/* Os atalhos de Eventos/Cursos/Vagas que ficavam aqui foram
+            removidos: além de duplicar links que já estão no header, em
+            telas de altura normal (laptop real, não só monitor grande)
+            eles empurravam a dica de rolagem e as estatísticas pra fora
+            da área visível da primeira tela. */}
 
         {/* Dica de rolagem — duas setinhas */}
-        <div className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs text-foreground/50 md:flex">
+        <div className="pointer-events-none absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-1 text-xs font-medium text-foreground/70 md:flex">
           <span className="mb-1">Role para descobrir</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
