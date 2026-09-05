@@ -2,6 +2,7 @@ import Link from "next/link";
 import Tilt from "@/components/Tilt";
 import HeroReveal from "@/components/HeroReveal";
 import HeroGlow from "@/components/HeroGlow";
+import ParticleField from "@/components/ParticleField";
 import ScrollReveal from "@/components/ScrollReveal";
 import MascotFloat from "@/components/MascotFloat";
 import ProfileBanner from "@/components/ProfileBanner";
@@ -108,6 +109,7 @@ export default function HomePage() {
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
       <div className="relative">
         <HeroGlow />
+        <ParticleField />
         <HeroReveal>
           <div className="mb-6 flex flex-col items-center gap-2 md:flex-row md:items-center md:justify-between md:gap-8">
             <section className="max-w-2xl">
