@@ -69,7 +69,11 @@ export default function HomePage() {
     <>
       {/* Full-bleed: essa seção cobre a primeira tela inteira, sem o
           max-w-6xl do resto da página — é a "cena" de abertura. */}
-      <HeroScrollStory />
+      <HeroScrollStory
+        eventCount={eventCount}
+        courseCount={courseCount}
+        jobCount={jobCount}
+      />
 
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <ProfileBanner />
