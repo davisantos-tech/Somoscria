@@ -97,6 +97,16 @@ h3,
   }
 }
 
+/* Foco visível de teclado, na cor da marca, em toda a plataforma — só
+   aparece em navegação por teclado (:focus-visible), nunca em clique de
+   mouse. Detalhe pequeno, mas é um dos primeiros que separa um site
+   "só bonito" de um site feito com cuidado de verdade. */
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* Efeito "LED" do cabeçalho: um fio de gradiente nas cores da marca correndo
    por baixo do header, tipo luz de neon — e um pulso suave atrás da marca
    d'água do logo. Discreto o bastante pra não competir com o conteúdo. */
