@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     "Oportunidades reais de BH e SP, direto na fonte oficial da empresa — sem vaga fantasma, sem taxa de intermediário.",
 };
 
+export const revalidate = 3600;
+
 export default function VagasPage() {
   const jobs = getJobs();
   const cities = getAvailableCities();
@@ -22,7 +24,8 @@ export default function VagasPage() {
           💼 Vagas
         </span>
         <h1 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Oportunidades reais de BH e SP
+          Oportunidades reais de{" "}
+          <span className="text-brand-green">BH e SP</span>
         </h1>
         <p className="mt-3 text-foreground/70">
           Direto na fonte oficial da empresa — sem vaga fantasma, sem

@@ -8,8 +8,9 @@ import type {
 
 export const NICHE_LABELS: Record<Niche, string> = {
   tecnologia: "Tecnologia",
+  empreendedorismo: "Empreendedorismo",
   saude: "Saúde",
-  negocios: "Negócios & Empreendedorismo",
+  negocios: "Negócios",
   marketing: "Marketing",
   design: "Design/UX",
   financas: "Finanças",

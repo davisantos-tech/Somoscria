@@ -4,6 +4,7 @@
 
 export type Niche =
   | "tecnologia"
+  | "empreendedorismo"
   | "saude"
   | "negocios"
   | "marketing"

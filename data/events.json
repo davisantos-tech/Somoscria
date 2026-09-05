@@ -3,7 +3,9 @@
     "id": "hack-for-humanity-sp-2026",
     "title": "Hack for Humanity: São Paulo",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Anhembi Morumbi University - Vila Olímpia Campus",
     "date": "2026-09-12",
@@ -16,7 +18,9 @@
     "id": "oficina-tipografica-saudade-2026",
     "title": "Oficina Tipográfica da Saudade",
     "type": "evento",
-    "niche": ["design"],
+    "niche": [
+      "design"
+    ],
     "city": "sao-paulo",
     "venue": "Oficina Tipográfica São Paulo",
     "date": "2026-09-12",
@@ -29,7 +33,9 @@
     "id": "tech-run-sp-tech-week-2026",
     "title": "Tech Run - São Paulo Tech Week",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Universidade de São Paulo",
     "date": "2026-09-13",
@@ -42,7 +48,9 @@
     "id": "black-angels-vcs-founders-breakfast-2026",
     "title": "[SP Tech Week] Black Angels, VCs & Founders Breakfast Meetup!",
     "type": "evento",
-    "niche": ["negocios"],
+    "niche": [
+      "empreendedorismo"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-14",
     "sourcePlatform": "luma",
@@ -54,7 +62,10 @@
     "id": "sptw-founders-kickoff-2026",
     "title": "SPTW Founders Kickoff",
     "type": "evento",
-    "niche": ["negocios", "tecnologia"],
+    "niche": [
+      "empreendedorismo",
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Oracle do Brasil Sistemas",
     "date": "2026-09-14",
@@ -67,7 +78,9 @@
     "id": "lovable-meetup-oracle-sp-2026",
     "title": "Lovable Meetup with Oracle São Paulo",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-14",
     "sourcePlatform": "luma",
@@ -79,7 +92,9 @@
     "id": "ia-transformar-metropoles-2026",
     "title": "Inteligência Artificial para Transformar Grandes Metrópoles",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Praça das Artes",
     "date": "2026-09-15",
@@ -89,10 +104,28 @@
     "isFree": true
   },
   {
+    "id": "ia-builders-hermes-2026",
+    "title": "IA Builders: uma experiência prática com o Hermes",
+    "type": "evento",
+    "niche": [
+      "tecnologia"
+    ],
+    "city": "sao-paulo",
+    "venue": "FIAP - Paulista",
+    "date": "2026-09-15",
+    "sourcePlatform": "luma",
+    "sourceUrl": "https://luma.com/23dfblaz",
+    "shortDescription": "Oficina prática de construção de agentes de IA usando o framework Hermes, com desenvolvedores em São Paulo.",
+    "isFree": true
+  },
+  {
     "id": "ai-market-access-brazil-2026",
     "title": "AI & Market Access Brazil",
     "type": "evento",
-    "niche": ["tecnologia", "negocios"],
+    "niche": [
+      "tecnologia",
+      "negocios"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-16",
     "sourcePlatform": "luma",
@@ -104,7 +137,9 @@
     "id": "tractian-industrial-intelligence-2026",
     "title": "Tractian: Inside the Future of Industrial Intelligence",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-16",
     "sourcePlatform": "luma",
@@ -116,7 +151,10 @@
     "id": "monkey-deg-virada-fiscal-2026",
     "title": "Monkey & DEG | A virada fiscal do Brasil",
     "type": "evento",
-    "niche": ["financas", "negocios"],
+    "niche": [
+      "financas",
+      "negocios"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-16",
     "sourcePlatform": "luma",
@@ -128,7 +166,9 @@
     "id": "soft-landing-night-tech-week-2026",
     "title": "Soft Landing Night - Tech Week",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-16",
     "sourcePlatform": "luma",
@@ -140,7 +180,9 @@
     "id": "documentario-respire-fundo-2026",
     "title": "Lançamento Documentário Respire Fundo",
     "type": "evento",
-    "niche": ["saude"],
+    "niche": [
+      "saude"
+    ],
     "city": "sao-paulo",
     "venue": "Museu da Imagem e do Som (MIS)",
     "date": "2026-09-16",
@@ -153,7 +195,9 @@
     "id": "physical-ai-summit-2026",
     "title": "Physical AI Summit | Year One of Humanoids",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "GT House",
     "date": "2026-09-17",
@@ -166,7 +210,9 @@
     "id": "quem-esta-pensando-moda-02-2026",
     "title": "#02 Quem está pensando moda?",
     "type": "evento",
-    "niche": ["design"],
+    "niche": [
+      "design"
+    ],
     "city": "sao-paulo",
     "venue": "LAPI - Quadra 1",
     "date": "2026-09-17",
@@ -176,10 +222,42 @@
     "isFree": true
   },
   {
+    "id": "sptw-closing-party-2026",
+    "title": "Closing Party: São Paulo Tech Week",
+    "type": "evento",
+    "niche": [
+      "tecnologia"
+    ],
+    "city": "sao-paulo",
+    "date": "2026-09-17",
+    "sourcePlatform": "luma",
+    "sourceUrl": "https://luma.com/b6044f3j",
+    "shortDescription": "Festa de encerramento da São Paulo Tech Week, reunindo quem passou pela semana de eventos de tecnologia da cidade.",
+    "isFree": true
+  },
+  {
+    "id": "sptw-founders-happy-hour-2026",
+    "title": "SPTW | Founders Happy Hour",
+    "type": "evento",
+    "niche": [
+      "empreendedorismo"
+    ],
+    "city": "sao-paulo",
+    "venue": "inovabra habitat",
+    "date": "2026-09-17",
+    "sourcePlatform": "luma",
+    "sourceUrl": "https://luma.com/moigjsoz",
+    "shortDescription": "Happy hour de encerramento pra fundadores de startups, parte da programação da São Paulo Tech Week.",
+    "isFree": true
+  },
+  {
     "id": "women-ai-native-era-2026",
     "title": "Bringing Women Together for the AI-Native Era",
     "type": "evento",
-    "niche": ["tecnologia", "negocios"],
+    "niche": [
+      "tecnologia",
+      "negocios"
+    ],
     "city": "sao-paulo",
     "date": "2026-09-18",
     "sourcePlatform": "luma",
@@ -191,7 +269,9 @@
     "id": "cursor-meetup-sp-2026",
     "title": "Cursor Meetup São Paulo",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Serena Cafeteria",
     "date": "2026-09-26",
@@ -204,7 +284,9 @@
     "id": "native-26-sp",
     "title": "NATIVE'26",
     "type": "evento",
-    "niche": ["outros"],
+    "niche": [
+      "outros"
+    ],
     "city": "sao-paulo",
     "venue": "033 Rooftop",
     "date": "2026-09-28",
@@ -217,7 +299,9 @@
     "id": "longevidade-ativa-2026",
     "title": "Longevidade Ativa",
     "type": "evento",
-    "niche": ["saude"],
+    "niche": [
+      "saude"
+    ],
     "city": "sao-paulo",
     "venue": "National School of Insurance",
     "date": "2026-10-01",
@@ -230,7 +314,9 @@
     "id": "acx-art-wine-pullman-2026",
     "title": "Vivência | ACX - Art & Wine no Hotel Pullman",
     "type": "evento",
-    "niche": ["outros"],
+    "niche": [
+      "outros"
+    ],
     "city": "sao-paulo",
     "venue": "Pullman São Paulo Vila Olímpia",
     "date": "2026-10-08",
@@ -243,7 +329,9 @@
     "id": "lovable-day-sp-2026",
     "title": "Lovable Day São Paulo",
     "type": "evento",
-    "niche": ["tecnologia"],
+    "niche": [
+      "tecnologia"
+    ],
     "city": "sao-paulo",
     "venue": "Community Creators Academy",
     "date": "2026-10-16",

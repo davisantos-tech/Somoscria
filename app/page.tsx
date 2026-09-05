@@ -12,6 +12,11 @@ import { getEvents, getCourses, getJobs } from "@/lib/data";
 // própria home. A ideia é que a pessoa navegue pela plataforma, não veja
 // tudo resumido na primeira tela.
 
+// Regenerada a cada hora — o "destaque da semana" usa o evento mais
+// próximo (isUpcoming() em lib/data.ts), que precisa recalcular contra a
+// data real com o tempo, não só quando o site é republicado.
+export const revalidate = 3600;
+
 export default function HomePage() {
   const events = getEvents();
   const courses = getCourses();

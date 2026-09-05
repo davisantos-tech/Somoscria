@@ -187,12 +187,13 @@ export default function HeroScrollStory({
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-foreground/70 sm:text-lg">
             A Cria junta, num só lugar, vaga, evento e curso que andam
-            espalhados por aí — garimpados pela comunidade e revisados por
-            gente de verdade antes de ir pro ar. A ideia é simples: menos
-            tempo garimpando, mais tempo aproveitando a oportunidade certa.
-            A gente nunca substitui a fonte oficial — só te mostra o
-            essencial e te leva direto pra ela, sem inscrição por aqui, sem
-            taxa, sem letra miúda.
+            espalhados por aí — garimpados pela comunidade e revisados por{" "}
+            <span className="font-semibold text-brand">gente de verdade</span>{" "}
+            antes de ir pro ar. A ideia é simples: menos tempo garimpando,
+            mais tempo aproveitando a oportunidade certa. A gente nunca
+            substitui a fonte oficial — só te mostra o essencial e te leva
+            direto pra ela, sem inscrição por aqui, sem taxa, sem letra
+            miúda.
           </p>
         </ScrollReveal>
 

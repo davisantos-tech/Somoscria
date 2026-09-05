@@ -15,7 +15,7 @@ const PILLARS = [
     title: "Eventos",
     chipClass: "bg-brand/15 text-brand",
     description:
-      "Conferências, meetups, encontros presenciais e online — em tecnologia, saúde, negócios, marketing, design, finanças, educação e mais.",
+      "Conferências, meetups, encontros presenciais e online — com foco em tecnologia e empreendedorismo, e também saúde, negócios, marketing, design e mais.",
   },
   {
     icon: "🎓",

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s · Cria",
   },
   description:
-    "Somos Cria. Eventos e cursos de tecnologia, saúde, negócios, marketing, design e mais em Belo Horizonte e São Paulo, achados pela comunidade. Cada card leva direto pra fonte oficial pra você garantir sua vaga.",
+    "Somos Cria. Eventos e cursos de tecnologia e empreendedorismo (e também saúde, negócios, marketing, design e mais) em Belo Horizonte e São Paulo, achados pela comunidade. Cada card leva direto pra fonte oficial pra você garantir sua vaga.",
 };
 
 // Evita o "flash" de tema errado: decide a classe .dark antes da hidratação,

@@ -10,6 +10,8 @@ export const metadata: Metadata = {
     "Trilhas gratuitas e pagas das melhores plataformas — freeCodeCamp, HubSpot Academy, AWS, Harvard e mais, achadas pela comunidade.",
 };
 
+export const revalidate = 3600;
+
 export default function CursosPage() {
   const courses = getCourses();
 
@@ -20,7 +22,8 @@ export default function CursosPage() {
           🎓 Cursos
         </span>
         <h1 className="font-display mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
-          Trilhas gratuitas e pagas pra você crescer
+          Trilhas gratuitas e pagas pra você{" "}
+          <span className="text-brand">crescer</span>
         </h1>
         <p className="mt-3 text-foreground/70">
           Das melhores plataformas — freeCodeCamp, HubSpot Academy, AWS,
