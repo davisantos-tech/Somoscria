@@ -15,7 +15,18 @@ export default function Template({ children }: { children: React.ReactNode }) {
     gsap.fromTo(
       el,
       { opacity: 0, y: 10 },
-      { opacity: 1, y: 0, duration: 0.45, ease: "power2.out" },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        ease: "power2.out",
+        // Sem isso, o `transform: translate(0px, 0px)` inline fica no
+        // elemento pra sempre depois do fade — e QUALQUER transform (mesmo
+        // identidade) num ancestral vira o "containing block" de todo
+        // `position: fixed` dentro dele, quebrando pin de ScrollTrigger
+        // (como o da home) que espera fixar relativo à viewport.
+        clearProps: "transform",
+      },
     );
   }, []);
 
