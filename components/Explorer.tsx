@@ -58,6 +58,17 @@ const EVENTO_TYPES: TypeFilter[] = [
 const CURSO_TYPES: TypeFilter[] = ["todos", "curso", "curso-gratuito", "curso-pago"];
 const VAGA_TYPES: TypeFilter[] = ["todos", "vaga"];
 
+// As duas áreas de foco da curadoria por enquanto — sempre aparecem como
+// atalho rápido de nicho, mesmo que a base ainda não tenha item algum
+// numa delas nessa página específica (ex.: Cursos sem curso de
+// empreendedorismo ainda). "todos" sempre lidera a lista.
+const PRIMARY_NICHES: NicheFilter[] = ["todos", "tecnologia", "empreendedorismo"];
+
+// BH e São Paulo são as duas cidades da fase 1 — ficam sempre visíveis
+// como atalho, mesmo sem evento ainda numa delas, com "Visão geral"
+// (todas as cidades) como opção padrão.
+const PRIMARY_CITIES: CityFilter[] = ["todas", "belo-horizonte", "sao-paulo"];
+
 // Remove acentos para permitir buscar "sao paulo" e encontrar "São Paulo".
 function normalize(text: string) {
   return text
@@ -104,6 +115,32 @@ export default function Explorer({
       NICHE_LABELS[a].localeCompare(NICHE_LABELS[b], "pt-BR"),
     );
   }, [items]);
+
+  // Cidade e nicho viram um "menu rápido" de botões em vez de dropdown: as
+  // opções primárias (definidas acima) sempre aparecem primeiro, mesmo sem
+  // item algum nelas ainda; o que sobrar da base real entra na sequência,
+  // sem esconder nenhum filtro que já tem dado de verdade.
+  const cityOptions = useMemo(() => {
+    const extra = cities.filter((c) => !PRIMARY_CITIES.includes(c));
+    return [
+      ...PRIMARY_CITIES.map((c) => ({
+        value: c,
+        label: c === "todas" ? "Visão geral" : CITY_LABELS[c as City],
+      })),
+      ...extra.map((c) => ({ value: c, label: CITY_LABELS[c] })),
+    ];
+  }, [cities]);
+
+  const nicheOptions = useMemo(() => {
+    const extra = niches.filter((n) => !PRIMARY_NICHES.includes(n));
+    return [
+      ...PRIMARY_NICHES.map((n) => ({
+        value: n,
+        label: n === "todos" ? "Todos os nichos" : NICHE_LABELS[n as Niche],
+      })),
+      ...extra.map((n) => ({ value: n, label: NICHE_LABELS[n] })),
+    ];
+  }, [niches]);
 
   const filtered = useMemo(() => {
     const q = normalize(query.trim());
@@ -183,16 +220,9 @@ export default function Explorer({
     setType(defaultType);
   }
 
-  // Nicho sempre aparece; Cidade e Tipo são opcionais dependendo do escopo
-  // — o total nunca passa de 3 nem fica abaixo de 2 (ver SCOPED_TYPE_OPTIONS).
-  const filterGridClass =
-    (showCityFilter ? 1 : 0) + 1 + (typeOptions ? 1 : 0) === 3
-      ? "sm:grid-cols-3"
-      : "sm:grid-cols-2";
-
   return (
     <div>
-      <div className="flex flex-col gap-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <label className="sr-only" htmlFor="search">
           {searchPlaceholder ?? "Buscar evento, curso ou vaga"}
         </label>
@@ -205,36 +235,30 @@ export default function Explorer({
           className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm outline-none placeholder:text-foreground/40 focus:border-brand"
         />
 
-        <div className={`grid grid-cols-1 gap-3 ${filterGridClass}`}>
-          {showCityFilter && (
-            <FilterSelect
-              label="Cidade"
-              value={city}
-              onChange={(v) => setCity(v as CityFilter)}
-              options={[
-                { value: "todas", label: "Todas as cidades" },
-                ...cities.map((c) => ({ value: c, label: CITY_LABELS[c] })),
-              ]}
-            />
-          )}
-          <FilterSelect
-            label="Nicho"
-            value={niche}
-            onChange={(v) => setNiche(v as NicheFilter)}
-            options={[
-              { value: "todos", label: "Todos os nichos" },
-              ...niches.map((n) => ({ value: n, label: NICHE_LABELS[n] })),
-            ]}
+        {showCityFilter && (
+          <FilterPills
+            label="Cidade"
+            value={city}
+            onChange={(v) => setCity(v as CityFilter)}
+            options={cityOptions}
           />
-          {typeOptions && (
-            <FilterSelect
-              label="Tipo"
-              value={type}
-              onChange={(v) => setType(v as TypeFilter)}
-              options={typeOptions}
-            />
-          )}
-        </div>
+        )}
+
+        <FilterPills
+          label="Nicho"
+          value={niche}
+          onChange={(v) => setNiche(v as NicheFilter)}
+          options={nicheOptions}
+        />
+
+        {typeOptions && (
+          <FilterSelect
+            label="Tipo"
+            value={type}
+            onChange={(v) => setType(v as TypeFilter)}
+            options={typeOptions}
+          />
+        )}
 
         {hasActiveFilters && (
           <button
@@ -281,6 +305,47 @@ export default function Explorer({
           .
         </div>
       )}
+    </div>
+  );
+}
+
+// Menu rápido de um toque só — usado em Cidade e Nicho, onde as opções
+// principais são poucas e vale mais a pena um botão visível do que abrir
+// um dropdown pra escolher.
+function FilterPills({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-medium text-foreground/60">{label}</p>
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => {
+          const active = value === opt.value;
+          return (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => onChange(opt.value)}
+              aria-pressed={active}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                active
+                  ? "border-brand bg-brand text-brand-foreground"
+                  : "border-border bg-background text-foreground/70 hover:border-brand hover:text-brand"
+              }`}
+            >
+              {opt.label}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 }
