@@ -1,10 +1,32 @@
 import {
+  CITY_DOT_CLASS,
   CITY_LABELS,
   NICHE_LABELS,
   PLATFORM_LABELS,
   SENIORITY_LABELS,
 } from "@/lib/constants";
-import type { CatalogItem } from "@/lib/types";
+import type { CatalogItem, City } from "@/lib/types";
+
+function CityTag({
+  city,
+  extra,
+  onlineLabel = "Online",
+}: {
+  city: City;
+  extra?: string;
+  onlineLabel?: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      <span
+        className={`h-1.5 w-1.5 shrink-0 rounded-full ${CITY_DOT_CLASS[city]}`}
+        aria-hidden="true"
+      />
+      {extra ? `${extra} · ` : ""}
+      {city === "online" ? onlineLabel : CITY_LABELS[city]}
+    </span>
+  );
+}
 
 function formatDateRange(date: string, endDate?: string) {
   const parse = (iso: string) => {
@@ -81,11 +103,10 @@ export default function ItemCard({ item }: { item: CatalogItem }) {
             </p>
             <p>
               📍{" "}
-              {item.city === "online"
-                ? "Online"
-                : `${item.venue ? item.venue + " · " : ""}${
-                    CITY_LABELS[item.city]
-                  }`}
+              <CityTag
+                city={item.city}
+                extra={item.city !== "online" ? item.venue : undefined}
+              />
             </p>
           </>
         )}
@@ -107,7 +128,7 @@ export default function ItemCard({ item }: { item: CatalogItem }) {
           <>
             <p>🏢 {item.company}</p>
             <p>
-              📍 {item.city === "online" ? "Remoto" : CITY_LABELS[item.city]}
+              📍 <CityTag city={item.city} onlineLabel="Remoto" />
             </p>
           </>
         )}

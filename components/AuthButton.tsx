@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { useAuthProfile } from "@/lib/hooks/useAuthProfile";
 
 function GoogleIcon() {
   return (
@@ -28,35 +27,12 @@ function GoogleIcon() {
   );
 }
 
-// Botão de login/logout via Google (Supabase Auth). Lê o usuário atual no
-// mount e escuta mudanças de sessão (login/logout em outra aba, expiração
-// etc.) — ver README para o setup do provider Google no Supabase.
+// Botão de login/logout via Google (Supabase Auth). Estado de sessão +
+// perfil vem do useAuthProfile (compartilhado com o banner "complete seu
+// perfil" na home) — ver README para o setup do provider Google no
+// Supabase.
 export default function AuthButton() {
-  const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  // Sem Supabase configurado já nasce "pronto" (sempre deslogado) — não há
-  // nada assíncrono pra esperar, então não passa pelo efeito abaixo.
-  const [ready, setReady] = useState(!isSupabaseConfigured);
-
-  useEffect(() => {
-    if (!isSupabaseConfigured) return;
-
-    const supabase = createClient();
-
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-      setReady(true);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      router.refresh();
-    });
-
-    return () => subscription.unsubscribe();
-  }, [router]);
+  const { loading, user, hasProfile } = useAuthProfile();
 
   async function handleLogin() {
     const supabase = createClient();
@@ -71,7 +47,7 @@ export default function AuthButton() {
     await supabase.auth.signOut();
   }
 
-  if (!ready) {
+  if (loading) {
     return (
       <div
         className="h-9 w-32 animate-pulse rounded-full bg-surface-muted"
@@ -108,18 +84,35 @@ export default function AuthButton() {
 
   return (
     <div className="flex items-center gap-2">
-      {avatarUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element -- avatar do Google, domínio externo variável
-        <img
-          src={avatarUrl}
-          alt=""
-          className="h-7 w-7 rounded-full"
-          referrerPolicy="no-referrer"
-        />
-      ) : null}
-      <span className="hidden text-sm text-foreground/70 sm:inline">
-        {firstName}
-      </span>
+      <Link
+        href="/perfil"
+        className="relative flex items-center gap-2 rounded-full py-1 pl-1 pr-2 transition hover:bg-surface-muted"
+        title={hasProfile === false ? "Complete seu perfil" : "Meu perfil"}
+      >
+        {avatarUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element -- avatar do Google, domínio externo variável
+          <img
+            src={avatarUrl}
+            alt=""
+            className="h-7 w-7 rounded-full"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand/20 text-xs font-semibold text-brand">
+            {firstName.charAt(0).toUpperCase()}
+          </span>
+        )}
+        {hasProfile === false && (
+          <span
+            className="absolute top-0 right-1 h-2 w-2 rounded-full bg-brand ring-2 ring-background"
+            aria-hidden="true"
+            title="Perfil incompleto"
+          />
+        )}
+        <span className="hidden text-sm text-foreground/70 sm:inline">
+          {firstName}
+        </span>
+      </Link>
       <button
         type="button"
         onClick={handleLogout}

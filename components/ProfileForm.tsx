@@ -3,10 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import {
-  CITY_SUGGESTIONS,
-  EDUCATION_STATUS_LABELS,
-} from "@/lib/constants";
+import { CITY_SUGGESTIONS, EDUCATION_STATUS_LABELS } from "@/lib/constants";
 import type { EducationStatus } from "@/lib/types";
 
 const EDUCATION_OPTIONS = Object.entries(EDUCATION_STATUS_LABELS) as [
@@ -14,9 +11,13 @@ const EDUCATION_OPTIONS = Object.entries(EDUCATION_STATUS_LABELS) as [
   string,
 ][];
 
+// Serve tanto pra completar o perfil pela primeira vez quanto pra editar
+// depois — em `/perfil`. Se já existe uma linha em `profiles`, pré-preenche
+// com ela; se não, só usa o nome que veio do Google.
 export default function ProfileForm() {
   const router = useRouter();
   const [checkingSession, setCheckingSession] = useState(true);
+  const [hadExistingProfile, setHadExistingProfile] = useState(false);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
@@ -26,18 +27,39 @@ export default function ProfileForm() {
   const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       if (!data.user) {
         router.replace("/");
         return;
       }
-      const metaName = data.user.user_metadata?.full_name as
-        | string
-        | undefined;
-      if (metaName) setFullName(metaName);
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("full_name, phone, city, education_status, years_experience")
+        .eq("id", data.user.id)
+        .maybeSingle();
+
+      if (profile) {
+        setHadExistingProfile(true);
+        setFullName(profile.full_name ?? "");
+        setPhone(profile.phone ?? "");
+        setCity(profile.city ?? "");
+        setEducationStatus(
+          (profile.education_status as EducationStatus) ?? "cursando",
+        );
+        setYearsExperience(String(profile.years_experience ?? 0));
+        setConsent(true); // já consentiu quando criou o perfil
+      } else {
+        const metaName = data.user.user_metadata?.full_name as
+          | string
+          | undefined;
+        if (metaName) setFullName(metaName);
+      }
+
       setCheckingSession(false);
     });
   }, [router]);
@@ -45,6 +67,7 @@ export default function ProfileForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
+    setSaved(false);
 
     if (!consent) {
       setError("Precisa marcar o consentimento pra gente salvar seu perfil.");
@@ -81,8 +104,15 @@ export default function ProfileForm() {
       return;
     }
 
-    router.push("/");
-    router.refresh();
+    if (hadExistingProfile) {
+      // Editando um perfil que já existia: fica na página, só confirma.
+      setSaved(true);
+      router.refresh();
+    } else {
+      // Primeira vez completando o perfil: segue pra home.
+      router.push("/");
+      router.refresh();
+    }
   }
 
   if (checkingSession) {
@@ -186,13 +216,20 @@ export default function ProfileForm() {
       </label>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
+      {saved && !error && (
+        <p className="text-sm text-brand-green">Perfil atualizado ✓</p>
+      )}
 
       <button
         type="submit"
         disabled={submitting}
         className="w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-medium text-brand-foreground transition hover:opacity-90 disabled:opacity-50"
       >
-        {submitting ? "Salvando…" : "Salvar e continuar"}
+        {submitting
+          ? "Salvando…"
+          : hadExistingProfile
+            ? "Salvar alterações"
+            : "Salvar e continuar"}
       </button>
     </form>
   );

@@ -24,6 +24,15 @@ export const CITY_LABELS: Record<City, string> = {
   online: "Online",
 };
 
+// Selo de cor por cidade — do moodboard de marca (BH laranja, SP amarelo).
+// Cidades sem cor própria ainda usam o verde como neutro "chegando".
+export const CITY_DOT_CLASS: Record<City, string> = {
+  "belo-horizonte": "bg-brand",
+  "sao-paulo": "bg-brand-yellow",
+  "sao-jose-do-rio-preto": "bg-brand-green",
+  online: "bg-foreground/30",
+};
+
 export const PLATFORM_LABELS: Record<SourcePlatform, string> = {
   sympla: "Sympla",
   luma: "Luma",

@@ -55,3 +55,46 @@ create trigger set_profiles_updated_at
   before update on public.profiles
   for each row
   execute function public.set_updated_at();
+
+-- Fila de revisão pra eventos encontrados por automação (scripts em
+-- scripts/scrapers/*). Guarda só metadado factual (título, data, local,
+-- link) — NUNCA descrição completa ou imagem da fonte, pra manter a
+-- promessa de marca de "resumo curto escrito por nós" mesmo com
+-- automação. Nada aqui aparece no site publicamente: um humano revisa,
+-- escreve o resumo curto e promove pra data/events.json manualmente.
+create table if not exists public.candidate_events (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  event_date date not null,
+  end_date date,
+  venue text,
+  city_raw text,
+  source_platform text not null,
+  source_url text not null unique,
+  status text not null default 'pending'
+    check (status in ('pending', 'approved', 'rejected')),
+  -- Sugestão de nicho via classificação zero-shot (Hugging Face) — nunca
+  -- definitiva, é só um ponto de partida pra quem revisa confirmar ou trocar.
+  suggested_niche text[],
+  reviewer_notes text,
+  scraped_at timestamptz not null default now(),
+  reviewed_at timestamptz
+);
+
+comment on table public.candidate_events is
+  'Candidatos a evento encontrados por automação, aguardando revisão humana antes de virar EventItem em data/events.json.';
+
+-- Se você já tinha rodado este schema antes de suggested_niche existir,
+-- este ALTER garante que a coluna aparece mesmo assim (create table if not
+-- exists, acima, não adiciona coluna em tabela que já existe).
+alter table public.candidate_events
+  add column if not exists suggested_niche text[];
+
+comment on column public.candidate_events.suggested_niche is
+  'Sugestão de nicho via IA (Hugging Face zero-shot) — sempre revisada por humano, nunca publicada sem confirmação.';
+
+-- RLS ligado, sem policy nenhuma pra anon/authenticated: só a service role
+-- (usada pelos scripts de automação, nunca exposta no navegador) e você
+-- mesmo pelo Table Editor do dashboard do Supabase conseguem ler/escrever
+-- aqui. Não existe UI pública nem privada-de-usuário pra essa tabela.
+alter table public.candidate_events enable row level security;

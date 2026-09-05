@@ -6,7 +6,7 @@ organizado por nicho (tecnologia, saúde, negócios, marketing, design,
 finanças, educação...).
 
 Login com Google é opcional pra navegar (a vitrine continua 100% aberta),
-mas destrava a personalização: quem completa o perfil (`/perfil/completar`)
+mas destrava a personalização: quem completa o perfil (`/perfil`)
 ganha uma experiência mais direcionada ao seu momento de carreira — sem
 precisar filtrar tudo na mão toda vez.
 
@@ -134,7 +134,7 @@ app/
   page.tsx                  # Home: hero + atalhos rápidos + Explorer
   sobre/page.tsx             # Página "Sobre" (modelo de curadoria)
   sugerir/page.tsx           # Formulário "Sugerir evento/curso"
-  perfil/completar/page.tsx  # Formulário de perfil pós-login (requer sessão)
+  perfil/page.tsx            # Perfil (criar/editar) — requer sessão
   auth/callback/route.ts     # Troca o code do OAuth por sessão Supabase
   layout.tsx                 # Layout raiz, header/footer, script anti-flash de tema
   globals.css                # Tailwind v4 + tokens de tema (claro/escuro)
@@ -142,7 +142,7 @@ components/
   Explorer.tsx           # Busca + filtros (cidade/nicho/tipo) + grid — client
   ItemCard.tsx            # Card unificado de evento/curso/vaga
   SuggestForm.tsx          # Formulário de sugestão (mailto:, sem backend)
-  ProfileForm.tsx           # Formulário de /perfil/completar
+  ProfileForm.tsx           # Formulário de /perfil
   AuthButton.tsx             # Login/logout com Google no Header
   Header.tsx / Footer.tsx / ThemeToggle.tsx
 data/
@@ -157,9 +157,15 @@ lib/
     client.ts                # Cliente Supabase pra Client Components
     server.ts                  # Cliente Supabase pra Server Components/Route Handlers
     proxy.ts                     # Helper de refresh de sessão, usado pelo proxy.ts da raiz
+  ai/
+    huggingface.ts              # Sugestão de nicho (zero-shot) pros scrapers — opcional
 proxy.ts                  # Roda em toda request: renova sessão e protege /perfil
 supabase/
-  schema.sql               # SQL da tabela profiles + RLS — rodar manualmente no Supabase
+  schema.sql               # SQL das tabelas profiles + candidate_events + RLS
+scripts/
+  scrapers/
+    luma.ts                    # npm run scrape:luma — ver Automação de descoberta
+    lib/supabaseAdmin.ts         # Cliente com service role, só pros scripts
 ```
 
 ## Como adicionar um novo evento
@@ -239,10 +245,43 @@ publicar uma vaga falsa. Preencha só com vagas reais. `isFree` existe por
 consistência de schema com `EventItem`/`CourseItem`, mas não tem uso prático
 pra vaga — mantenha `true`.
 
+## Automação de descoberta (scrapers + fila de revisão)
+
+Pra não depender só de curadoria 100% manual, `scripts/scrapers/` tem
+scripts que encontram candidatos a evento em fontes públicas e jogam numa
+**fila de revisão** — nunca publicam nada sozinhos. Regras que isso segue
+à risca (ver `/sobre`):
+
+- Só extrai metadado factual (título, data, local, link) — nunca
+  descrição completa ou imagem da fonte.
+- Nada vai pro site sem um humano revisar e escrever o resumo curto.
+- Se uma fonte usa CAPTCHA ou bloqueio anti-bot ativo, o scraper dessa
+  fonte não tenta contornar — melhor não cobrir a fonte do que forçar.
+
+**Como rodar:**
+
+```bash
+npm run scrape:luma   # busca eventos em luma.com (páginas de descoberta por cidade)
+```
+
+Os candidatos caem na tabela `candidate_events` do Supabase (schema em
+`supabase/schema.sql`) com `status: 'pending'`. Revise pelo **Table
+Editor** do dashboard do Supabase: aprove os que valem a pena, escreva o
+resumo curto, e adicione manualmente em `data/events.json` seguindo o
+schema de [Como adicionar um novo evento](#como-adicionar-um-novo-evento).
+
+**Sugestão de nicho via IA (opcional):** se você configurar
+`HUGGINGFACE_API_TOKEN` no `.env.local` (token "Read" grátis em
+[huggingface.co/settings/tokens](https://huggingface.co/settings/tokens)),
+cada candidato já chega na fila com uma sugestão de nicho (coluna
+`suggested_niche`, via classificação zero-shot — `lib/ai/huggingface.ts`).
+É só um ponto de partida pra quem revisa confirmar ou trocar — sem o
+token, o scraper funciona normalmente, só sem essa sugestão.
+
 ## Login com Google (Supabase Auth)
 
 Login é opcional pra navegar a vitrine, mas obrigatório pra acessar
-`/perfil/completar` (o `proxy.ts` da raiz garante isso). Nenhum desses
+`/perfil` (o `proxy.ts` da raiz garante isso). Nenhum desses
 passos pode ser feito pelo Claude — todos exigem acesso às suas próprias
 contas Google Cloud e Supabase:
 
@@ -284,7 +323,7 @@ contas Google Cloud e Supabase:
 
 8. Rode `npm run dev`, clique em "Entrar com Google" no header e teste o
    fluxo. Primeiro login sem perfil ainda cadastrado → redireciona
-   automaticamente pra `/perfil/completar`.
+   automaticamente pra `/perfil`.
 
 ## Configuração
 
@@ -311,5 +350,3 @@ contas Google Cloud e Supabase:
 - Usar o `years_experience` do perfil pra de fato destacar/ordenar vagas
   compatíveis com a senioridade de quem está logado (hoje o dado é
   coletado mas ainda não influencia o que aparece na home).
-- Página de editar perfil (hoje só existe o formulário de criação inicial
-  em `/perfil/completar`).

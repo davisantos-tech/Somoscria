@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import Script from "next/script";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Fonte de corpo/UI da identidade da Cria (a outra opção do moodboard,
+// Sora, fica pra uso pontual se algum dia precisarmos de uma segunda voz
+// tipográfica — por ora, uma fonte de corpo só, mais simples de manter).
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-body",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// Clash Display (títulos) não está no Google Fonts — é da Fontshare.
+// Carregado via <link> abaixo (perto do <Header />) em vez de next/font,
+// que só suporta Google Fonts e fontes locais.
+const CLASH_DISPLAY_URL =
+  "https://api.fontshare.com/v2/css?f[]=clash-display@500,600,700&display=swap";
 
 export const metadata: Metadata = {
   title: {
@@ -41,9 +45,13 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-BR"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${plusJakartaSans.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Clash Display via Fontshare — display=swap já vai na query string da URL */}
+        <link rel="stylesheet" href={CLASH_DISPLAY_URL} />
+      </head>
       <body className="flex min-h-full flex-col">
         <Script
           id="theme-init"

@@ -1,7 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import gsap from "gsap";
 import ItemCard from "./ItemCard";
+import Tilt from "./Tilt";
 import { CITY_LABELS, NICHE_LABELS } from "@/lib/constants";
 import type {
   CatalogItem,
@@ -91,6 +93,27 @@ export default function Explorer({
     });
   }, [items, query, city, niche, type]);
 
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  // Anima os cards entrando (fade + slide-up, em cascata) toda vez que o
+  // resultado filtrado muda — reforça a sensação "dinâmica, leve" da marca.
+  useEffect(() => {
+    const el = gridRef.current;
+    if (!el || el.children.length === 0) return;
+    gsap.fromTo(
+      el.children,
+      { opacity: 0, y: 16 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        ease: "power2.out",
+        stagger: 0.05,
+        overwrite: true,
+      },
+    );
+  }, [filtered]);
+
   const hasActiveFilters =
     query.trim() !== "" || city !== "todas" || niche !== "todos" || type !== "todos";
 
@@ -162,9 +185,14 @@ export default function Explorer({
       </p>
 
       {filtered.length > 0 ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          ref={gridRef}
+          className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {filtered.map((item) => (
-            <ItemCard key={item.id} item={item} />
+            <Tilt key={item.id}>
+              <ItemCard item={item} />
+            </Tilt>
           ))}
         </div>
       ) : (

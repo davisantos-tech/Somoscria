@@ -14,8 +14,19 @@ import type { CatalogItem, City, CourseItem, EventItem, JobItem } from "./types"
 // uma oferta específica de uma empresa específica — inventar uma aqui
 // seria publicar uma vaga falsa. Preencha manualmente com vagas reais.
 
+/** Um evento continua "em cartaz" até o fim do seu último dia. */
+function isUpcoming(event: EventItem): boolean {
+  const lastDay = event.endDate ?? event.date;
+  const [y, m, d] = lastDay.split("-").map(Number);
+  const endOfLastDay = new Date(y, (m ?? 1) - 1, d ?? 1, 23, 59, 59);
+  return endOfLastDay >= new Date();
+}
+
 export function getEvents(): EventItem[] {
-  return eventsSeed as EventItem[];
+  // Filtra eventos já encerrados — mostrar como "descubra esse evento" algo
+  // que já passou é pior do que mostrar menos itens. Isso é calculado toda
+  // vez com base na data real do servidor, não precisa de manutenção manual.
+  return (eventsSeed as EventItem[]).filter(isUpcoming);
 }
 
 export function getCourses(): CourseItem[] {

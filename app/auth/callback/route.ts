@@ -26,7 +26,7 @@ export async function GET(request: Request) {
           .maybeSingle();
 
         if (!profile) {
-          return NextResponse.redirect(`${origin}/perfil/completar`);
+          return NextResponse.redirect(`${origin}/perfil`);
         }
       }
 
